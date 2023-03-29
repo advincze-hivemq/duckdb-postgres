@@ -1,0 +1,18 @@
+version: '2' 
+
+services:
+  postgres:
+    image: postgres:15.2-alpine3.17
+    environment:
+      - POSTGRES_PASSWORD=foo
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+  dd:
+    build: .
+    depends_on: 
+      - postgres
+    command: /code/duckdb -init /code/unload.sql -no-stdin
+    volumes:
+      - ./exp:/exp
